@@ -2,7 +2,7 @@ int laneHeight = 50;
 Walker[] racers = new Walker[10];
 int firstPlace, secondPlace, thirdPlace, fourthPlace, fifthPlace, sixthPlace, seventhPlace, eighthPlace, ninethPlace, tenthPlace;
 boolean gameStart = false;
-int balance = 200; String totalBalance = "Your current balance is: " + balance + " coins";
+int balance = 500; String totalBalance = "Your current balance is: " + balance + " coins";
 boolean betOne = false; boolean betTwo = false; boolean betThree = false; boolean betFour = false; boolean betFive = false;
 int selectedRacer = 10; //void selection until racer is selected through mousePressed()
 boolean getFirst = true; boolean getSecond = true; boolean getThird = true; boolean getFourth = true; boolean getFifth = true; boolean getSixth = true; boolean getSeventh = true; boolean getEighth = true; boolean getNineth = true; boolean getTenth = true;
