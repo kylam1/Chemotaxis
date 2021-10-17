@@ -802,7 +802,7 @@ if(gameStart == true) {
       fill(210, 0, 0);
       rect(500, 345, 125, 50);
       fill(255);
-      text("Return", 562.5, 375);
+      text("Return to race", 562.5, 375);
       //End of Finish screen
     }
   } //End of End screen
@@ -875,7 +875,7 @@ class Walker
   void walk()
   {
     if(myX <= 985){ 
-      myX+= (int)(Math.random()*30); //Speed of racers
+      myX+= (int)(Math.random()*10); //Speed of racers
       if (myY >= laneY+(laneHeight/4)) //Lower limit of lane
         myY-= 3;
       else if (myY <= laneY - (laneHeight/4)) //Upper limit of lane
