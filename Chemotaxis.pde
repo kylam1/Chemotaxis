@@ -679,7 +679,10 @@ if(gameStart == true) {
   //Pause function
   if(raceStart == true && gameEnd == false) {  
     //Pause function
-    loop = !loop;
+    if(loop == true)
+      loop = false;
+    else
+      loop = true;
     if(loop == true)
       noLoop();
     else
