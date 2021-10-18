@@ -676,18 +676,15 @@ if(gameStart == true) {
   } //End of Begin Race
 } //End of gameStart == true
 
-  //Pause function
+/*  //Pause function
   if(raceStart == true && gameEnd == false) {  
     //Pause function
-    if(loop == true)
-      loop = false;
-    else
-      loop = true;
+    loop = !loop;
     if(loop == true)
       noLoop();
     else
       loop(); 
-  } //End of Pause function
+  } //End of Pause function */
   
   //End screen
   if(gameEnd == true && raceStart == true) {
