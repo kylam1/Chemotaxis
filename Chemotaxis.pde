@@ -1,24 +1,26 @@
 int laneHeight = 50;
 Walker[] racers = new Walker[10];
-int firstPlace, secondPlace, thirdPlace, fourthPlace, fifthPlace, sixthPlace, seventhPlace, eighthPlace, ninethPlace, tenthPlace;
+int firstPlace, secondPlace, thirdPlace, fourthPlace, fifthPlace, sixthPlace, seventhPlace, eighthPlace, ninthPlace, tenthPlace;
 boolean gameStart = false;
 int balance = 500; String totalBalance = "Your current balance is: " + balance + " coins";
 boolean betOne = false; boolean betTwo = false; boolean betThree = false; boolean betFour = false; boolean betFive = false;
 int selectedRacer = 10; //void selection until racer is selected through mousePressed()
-boolean getFirst = true; boolean getSecond = true; boolean getThird = true; boolean getFourth = true; boolean getFifth = true; boolean getSixth = true; boolean getSeventh = true; boolean getEighth = true; boolean getNineth = true; boolean getTenth = true;
-float firstTime, secondTime, thirdTime, fourthTime, fifthTime, sixthTime, seventhTime, eighthTime, ninethTime, tenthTime;
-int raceStartTime = 0;
+boolean getFirst = true; boolean getSecond = true; boolean getThird = true; boolean getFourth = true; boolean getFifth = true; boolean getSixth = true; boolean getSeventh = true; boolean getEighth = true; boolean getNinth = true; boolean getTenth = true;
+float firstTime, secondTime, thirdTime, fourthTime, fifthTime, sixthTime, seventhTime, eighthTime, ninthTime, tenthTime;
+float raceStartTime = 0;
 boolean gameEnd = false;
 int totalWon = 0;
+boolean poorButtonShown = false; boolean poorButtonPressed = false; boolean chance;
+float leverY; int speed;
 
 void setup()
 {
-  size(1000,500);
+  size(1100,500);
   background(0);
   frameRate(20);
   textAlign(CENTER); //All text is centered at x = 575
-  firstPlace = 0; secondPlace = 1; thirdPlace = 2; fourthPlace = 3; fifthPlace = 4; sixthPlace = 5; seventhPlace = 6; eighthPlace = 7; ninethPlace = 8; tenthPlace = 9;
-  firstTime = secondTime = thirdTime = fourthTime = fifthTime = sixthTime = seventhTime = eighthTime = ninethTime = tenthTime = 0;
+  firstPlace = 0; secondPlace = 1; thirdPlace = 2; fourthPlace = 3; fifthPlace = 4; sixthPlace = 5; seventhPlace = 6; eighthPlace = 7; ninthPlace = 8; tenthPlace = 9;
+  firstTime = secondTime = thirdTime = fourthTime = fifthTime = sixthTime = seventhTime = eighthTime = ninthTime = tenthTime = 0;
   //Array initialization
   int r = 255; int g = 0; int b = 0;
   int racerY = 25;
@@ -37,12 +39,50 @@ void setup()
     if(i == 4 || i == 5)
       b+=127.5;   
   } // End of Array initialization
+  leverY = 385;
 }
 
 /////////////////////////////////////
 
 void draw()
 {
+if(gameStart == true && raceStart == false && startPressed == true && gameEnd == false) {
+  //Lever
+  fill(255);
+  rect(1035, 100, 30, 300, 30);
+  strokeWeight(1);
+  if(mousePressed == true && (mouseX>=1020 && mouseX<=1080)) { //Horizontal limiter
+    if(leverY == 115) { //top of slider
+      if(mouseY>=115 && mouseY<=130)
+        leverY = mouseY;
+    }
+    else if(leverY == 385) { //bottom of slider
+      if(mouseY<=385 && mouseY>370)
+        leverY = mouseY;
+    }
+    else if((leverY>115 && leverY<385) && (mouseY > leverY - 40 && mouseY < leverY + 40)) { //Middle of slider
+      leverY = mouseY;
+    }
+    else if (mouseY<115 && mouseY>100) //Gives a bit of leeway for dragging up
+      leverY = 115;
+    else if (mouseY>385 && mouseY<400) //Gives a bit of leeway for dragging down
+      leverY = 385;
+  } 
+  if(leverY < 115) //Top backup reset
+    leverY = 115;
+  if(leverY > 385)  //Bottom backup reset
+    leverY = 385;
+  fill(100);
+  ellipse(1050, leverY, 30, 30);
+  speed = Math.abs(485 - (int)leverY) / 20;
+  textAlign(CENTER);
+  textSize(15);
+  fill(255);
+  strokeWeight(1);
+  text("Speed Control", 1035, 75);
+  //End of Lever
+}
+  
 if(gameStart == false && startPressed == false) {
   //Race Lanes
   strokeWeight(2);
@@ -107,7 +147,42 @@ if(gameStart == false && startPressed == false) {
   text("300 coins", 575, 380);
   text("400 coins", 725, 380);
   text("500 coins", 875, 380);
+  
+  if(balance < 100) {
+    poorButtonShown = true;
+    fill(207, 27, 27);
+    rect(875, 425, 100, 50);
+    fill(0);
+    text("I'm Poor :(", 925, 455);
+  }
   //End of Start screen
+  
+  //Poor button screen
+  if(poorButtonPressed == true) {
+    background(0);
+    textAlign(CENTER);
+    fill(210, 0, 0);
+    strokeWeight(1);
+    stroke(200);
+    rect(450, 300, 100, 50);
+    fill(255);
+    textSize(20);
+    text("Return", 500, 330);
+    noStroke();
+    fill(255);
+    textSize(40);
+    if(chance == true) {  
+      text("FINE. HAVE 100 COINS FOR FREE >:|", 500, 150);
+      textSize(30);
+      text("IT WON'T HAPPEN AGAIN.", 500, 250);
+    }
+    else {
+      text("HAHA. TOO BAD!!!", 500, 150);
+      textSize(30);
+      text("YOU'LL GET NOTHING FROM ME! >:)", 500, 250);
+    }
+  }
+  //End of Poor button screen
   
   //Bet selected
   if(betSelected == true) {
@@ -341,46 +416,46 @@ if(gameStart == true && raceStart == true && gameEnd == false) {
       }
    } //End check for eighth place
    
-  boolean checkForNineth = true;
-  int oldNineth = ninethPlace;
+  boolean checkForNinth = true;
+  int oldNinth = ninthPlace;
   for(int checkFinish = 0; checkFinish < racers.length; checkFinish++) { //Checks if the _ place racer has finished the race and should not update
     if(checkFinish != firstPlace && checkFinish != secondPlace && checkFinish != thirdPlace && checkFinish != fourthPlace && checkFinish != fifthPlace && checkFinish != sixthPlace && checkFinish != seventhPlace && checkFinish != eighthPlace && racers[checkFinish].myX >= 960)
-      checkForNineth = false;
+      checkForNinth = false;
   }
-  if(checkForNineth == true) {
-    for(int ninethCheck = 0; ninethCheck < racers.length; ninethCheck++) {
-      if((ninethCheck != firstPlace) && (ninethCheck != secondPlace) && (ninethCheck != thirdPlace) && (ninethCheck != fourthPlace) && (ninethCheck != fifthPlace) && (ninethCheck != sixthPlace) && (ninethCheck != seventhPlace) && (ninethCheck != eighthPlace) && (racers[ninethPlace].myX <= racers[ninethCheck].myX))
-        ninethPlace = ninethCheck;
-      if(ninethPlace == eighthPlace)
-        ninethPlace = oldEighth;
-      if(ninethPlace == seventhPlace)
-        ninethPlace = oldSeventh;
-      if(ninethPlace == sixthPlace)
-        ninethPlace = oldSixth;
-      if(ninethPlace == fifthPlace)
-        ninethPlace = oldFifth;
-      if(ninethPlace == fourthPlace)
-        ninethPlace = oldFourth;
-      if(ninethPlace == thirdPlace)
-        ninethPlace = oldThird;
-      if(ninethPlace == secondPlace)
-        ninethPlace = oldSecond;
-      if(ninethPlace == firstPlace)
-        ninethPlace = oldFirst;
+  if(checkForNinth == true) {
+    for(int ninthCheck = 0; ninthCheck < racers.length; ninthCheck++) {
+      if((ninthCheck != firstPlace) && (ninthCheck != secondPlace) && (ninthCheck != thirdPlace) && (ninthCheck != fourthPlace) && (ninthCheck != fifthPlace) && (ninthCheck != sixthPlace) && (ninthCheck != seventhPlace) && (ninthCheck != eighthPlace) && (racers[ninthPlace].myX <= racers[ninthCheck].myX))
+        ninthPlace = ninthCheck;
+      if(ninthPlace == eighthPlace)
+        ninthPlace = oldEighth;
+      if(ninthPlace == seventhPlace)
+        ninthPlace = oldSeventh;
+      if(ninthPlace == sixthPlace)
+        ninthPlace = oldSixth;
+      if(ninthPlace == fifthPlace)
+        ninthPlace = oldFifth;
+      if(ninthPlace == fourthPlace)
+        ninthPlace = oldFourth;
+      if(ninthPlace == thirdPlace)
+        ninthPlace = oldThird;
+      if(ninthPlace == secondPlace)
+        ninthPlace = oldSecond;
+      if(ninthPlace == firstPlace)
+        ninthPlace = oldFirst;
     }
-  } //End check for nineth place
+  } //End check for ninth place
   
   boolean checkForTenth = true; 
   for(int checkFinish = 0; checkFinish < racers.length; checkFinish++) { //Checks if the _ place racer has finished the race and should not update
-    if(checkFinish != firstPlace && checkFinish != secondPlace && checkFinish != thirdPlace && checkFinish != fourthPlace && checkFinish != fifthPlace && checkFinish != sixthPlace && checkFinish != seventhPlace && checkFinish != eighthPlace && checkFinish != ninethPlace && racers[checkFinish].myX >= 960)
+    if(checkFinish != firstPlace && checkFinish != secondPlace && checkFinish != thirdPlace && checkFinish != fourthPlace && checkFinish != fifthPlace && checkFinish != sixthPlace && checkFinish != seventhPlace && checkFinish != eighthPlace && checkFinish != ninthPlace && racers[checkFinish].myX >= 960)
       checkForTenth = false;
   }
   if(checkForTenth == true) {
     for(int tenthCheck = 0; tenthCheck < racers.length; tenthCheck++) {
-      if((tenthCheck != firstPlace) && (tenthCheck != secondPlace) && (tenthCheck != thirdPlace) && (tenthCheck != fourthPlace) && (tenthCheck != fifthPlace) && (tenthCheck != sixthPlace) && (tenthCheck != seventhPlace) && (tenthCheck != eighthPlace) && (tenthCheck != ninethPlace) && (racers[tenthPlace].myX <= racers[tenthCheck].myX))
+      if((tenthCheck != firstPlace) && (tenthCheck != secondPlace) && (tenthCheck != thirdPlace) && (tenthCheck != fourthPlace) && (tenthCheck != fifthPlace) && (tenthCheck != sixthPlace) && (tenthCheck != seventhPlace) && (tenthCheck != eighthPlace) && (tenthCheck != ninthPlace) && (racers[tenthPlace].myX <= racers[tenthCheck].myX))
         tenthPlace = tenthCheck;
-      if(tenthPlace == ninethPlace)
-        tenthPlace = oldNineth;
+      if(tenthPlace == ninthPlace)
+        tenthPlace = oldNinth;
       if(tenthPlace == eighthPlace)
         tenthPlace = oldEighth;
       if(tenthPlace == seventhPlace)
@@ -399,7 +474,7 @@ if(gameStart == true && raceStart == true && gameEnd == false) {
         tenthPlace = oldFirst;
     }
   } //End check for tenth (last) place
-  //System.out.println(firstPlace + ", " + secondPlace + ", " + thirdPlace + ", " + fourthPlace + ", " + fifthPlace + ", " + sixthPlace + ", " + seventhPlace + ", " + eighthPlace + ", " + ninethPlace + ", " + tenthPlace);  
+  //System.out.println(firstPlace + ", " + secondPlace + ", " + thirdPlace + ", " + fourthPlace + ", " + fifthPlace + ", " + sixthPlace + ", " + seventhPlace + ", " + eighthPlace + ", " + ninthPlace + ", " + tenthPlace);  
 
 //////////////////////////////////// End of check placements
 
@@ -441,7 +516,7 @@ if(gameStart == true && raceStart == true && gameEnd == false) {
     if(getFirst == true)
        firstTime = (float)millis()/1000 - raceStartTime;
        getFirst = false;
-    String first = "1st Place" + " - " + firstTime;
+    String first = "1st Place" + " - " + (int(firstTime*1000))/1000.;
     text(first, 50, racers[firstPlace].laneY + 5);
   }
   if(racers[secondPlace].myX >= 960) {
@@ -449,7 +524,7 @@ if(gameStart == true && raceStart == true && gameEnd == false) {
     if(getSecond == true)
       secondTime = (float)millis()/1000 - raceStartTime;
       getSecond = false;
-    String second = "2nd Place" + " - " + secondTime;
+    String second = "2nd Place" + " - " + (int(secondTime*1000))/1000.;
     text(second, 50, racers[secondPlace].laneY + 5);
   }
   if(racers[thirdPlace].myX >= 960) {
@@ -457,7 +532,7 @@ if(gameStart == true && raceStart == true && gameEnd == false) {
     if(getThird == true)
       thirdTime = (float)millis()/1000 - raceStartTime;
       getThird = false;
-    String third = "3rd Place" + " - " + thirdTime;
+    String third = "3rd Place" + " - " + (int(thirdTime*1000))/1000.;
     text(third, 50, racers[thirdPlace].laneY + 5);
   }
   if(racers[fourthPlace].myX >= 960) {
@@ -465,7 +540,7 @@ if(gameStart == true && raceStart == true && gameEnd == false) {
     if(getFourth == true)
       fourthTime = (float)millis()/1000 - raceStartTime;
       getFourth = false;
-    String fourth = "4th Place" + " - " + fourthTime;
+    String fourth = "4th Place" + " - " + (int(fourthTime*1000))/1000.;
     text(fourth, 50, racers[fourthPlace].laneY + 5);
   }
   if(racers[fifthPlace].myX >= 960) {
@@ -473,7 +548,7 @@ if(gameStart == true && raceStart == true && gameEnd == false) {
     if(getFifth == true)
       fifthTime = (float)millis()/1000 - raceStartTime;
       getFifth = false;
-    String fifth = "5th Place" + " - " + fifthTime;
+    String fifth = "5th Place" + " - " + (int(fifthTime*1000))/1000.;
     text(fifth, 50, racers[fifthPlace].laneY + 5);
   }
   if(racers[sixthPlace].myX >= 960) {
@@ -481,7 +556,7 @@ if(gameStart == true && raceStart == true && gameEnd == false) {
     if(getSixth == true)
       sixthTime = (float)millis()/1000 - raceStartTime;
       getSixth = false;
-    String sixth = "6th Place" + " - " + sixthTime;
+    String sixth = "6th Place" + " - " + (int(sixthTime*1000))/1000.;
     text(sixth, 50, racers[sixthPlace].laneY + 5);
   }
   if(racers[seventhPlace].myX >= 960) {
@@ -489,7 +564,7 @@ if(gameStart == true && raceStart == true && gameEnd == false) {
     if(getSeventh == true)
       seventhTime = (float)millis()/1000 - raceStartTime;
       getSeventh = false;
-    String seventh = "7th Place" + " - " + seventhTime;
+    String seventh = "7th Place" + " - " + (int(seventhTime*1000))/1000.;
     text(seventh, 50, racers[seventhPlace].laneY + 5);
   }
   if(racers[eighthPlace].myX >= 960) {
@@ -497,23 +572,23 @@ if(gameStart == true && raceStart == true && gameEnd == false) {
     if(getEighth == true)
       eighthTime = (float)millis()/1000 - raceStartTime;
       getEighth = false;
-    String eighth = "8th Place" + " - " + eighthTime;
+    String eighth = "8th Place" + " - " + (int(eighthTime*1000))/1000.;
     text(eighth, 50, racers[eighthPlace].laneY + 5);
   }
-  if(racers[ninethPlace].myX >= 960) {
+  if(racers[ninthPlace].myX >= 960) {
     fill(offPodium);
-    if(getNineth == true)
-      ninethTime = (float)millis()/1000 - raceStartTime;
-      getNineth = false;
-    String nineth = "9th Place" + " - " + ninethTime;
-    text(nineth, 50, racers[ninethPlace].laneY + 5);
+    if(getNinth == true)
+      ninthTime = (float)millis()/1000 - raceStartTime;
+      getNinth = false;
+    String ninth = "9th Place" + " - " + (int(ninthTime*1000))/1000.;
+    text(ninth, 50, racers[ninthPlace].laneY + 5);
   }
   if(racers[tenthPlace].myX >= 960) {
     fill(offPodium);
     if(getTenth == true)
       tenthTime = (float)millis()/1000 - raceStartTime;
       getTenth = false;
-    String tenth = "10th Place" + " - " + tenthTime;
+    String tenth = "10th Place" + " - " + (int(tenthTime*1000))/1000.;
     text(tenth, 50, racers[tenthPlace].laneY + 5);
   }
   //End of Final placement
@@ -551,7 +626,7 @@ int bet = 0;
 void mousePressed() {
 if(gameStart == false) {
   if(mouseY >= 350 && mouseY <= 400) { //Y position of bet selection buttons
-    if(mouseX >= 225 && mouseX <= 325) { //Bet 100
+    if(mouseX >= 225 && mouseX <= 325 && balance >= 100) { //Bet 100
       betOne = true;
       betTwo = betThree = betFour = betFive = false;
       betSelected = true;
@@ -582,6 +657,19 @@ if(gameStart == false) {
       bet = 500;
     }
   } //End of check Y position of bet selection buttons
+  
+  //I'M POOR BUTTON
+  if(mouseX >= 875 && mouseX <= 975 && mouseY >= 425 && mouseY <= 475 && poorButtonShown == true) {
+    chance = Math.random() > 0.5;
+    if(chance == true)
+      balance += 100;
+    totalBalance = "Your current balance is: " + balance + " coins";
+    poorButtonPressed = true;
+    poorButtonShown = false;
+  }
+  if(mouseX >= 450 && mouseX <= 550 && mouseY >= 300 && mouseY <= 350 && poorButtonPressed == true) {
+    poorButtonPressed = false;
+  }//End of I'm Poor button
   
   //Racer selection
   if(betSelected == true) {
@@ -672,11 +760,12 @@ if(gameStart == true) {
     if(getStartTime == true) {
       getStartTime = false;
       raceStartTime = millis()/1000;
+      System.out.println(raceStartTime);
     }
   } //End of Begin Race
 } //End of gameStart == true
 
-/*  //Pause function
+  //Pause function
   if(raceStart == true && gameEnd == false) {  
     //Pause function
     loop = !loop;
@@ -684,7 +773,7 @@ if(gameStart == true) {
       noLoop();
     else
       loop(); 
-  } //End of Pause function */
+  } //End of Pause function
   
   //End screen
   if(gameEnd == true && raceStart == true) {
@@ -765,10 +854,10 @@ if(gameStart == true) {
           
             totalWon = (int)(bet*-0.5); //8th place lose 50% of bet
         }
-        if(selectedRacer == ninethPlace) {
-          String ninethPlaceEnd = "You got nineth place with a time of " + ninethTime;
+        if(selectedRacer == ninthPlace) {
+          String ninthPlaceEnd = "You got ninth place with a time of " + ninthTime;
           textSize(30);
-          text(ninethPlaceEnd, 387.5, 125);
+          text(ninthPlaceEnd, 387.5, 125);
           totalWon = (int)(bet*-0.75); //9th place lose 75% of bet
         }
         if(selectedRacer == tenthPlace) {
@@ -781,7 +870,7 @@ if(gameStart == true) {
       
       fill(247,201,56);
       String coinsWon;
-      if(selectedRacer == seventhPlace || selectedRacer == eighthPlace || selectedRacer == ninethPlace || selectedRacer == tenthPlace)
+      if(selectedRacer == seventhPlace || selectedRacer == eighthPlace || selectedRacer == ninthPlace || selectedRacer == tenthPlace)
         coinsWon = "You lost " + -(totalWon) + " coins";
       else
         coinsWon = "You won " + totalWon + " coins!";
@@ -829,9 +918,9 @@ if(gameStart == true) {
       finishPressed = false;
       updateBalance = true;
       bet = 0;
-      firstPlace = 0; secondPlace = 1; thirdPlace = 2; fourthPlace = 3; fifthPlace = 4; sixthPlace = 5; seventhPlace = 6; eighthPlace = 7; ninethPlace = 8; tenthPlace = 9;
-      firstTime = secondTime = thirdTime = fourthTime = fifthTime = sixthTime = seventhTime = eighthTime = ninethTime = tenthTime = 0;
-      getFirst = getSecond = getThird = getFourth = getFifth = getSixth = getSeventh = getEighth = getNineth = getTenth = true;
+      firstPlace = 0; secondPlace = 1; thirdPlace = 2; fourthPlace = 3; fifthPlace = 4; sixthPlace = 5; seventhPlace = 6; eighthPlace = 7; ninthPlace = 8; tenthPlace = 9;
+      firstTime = secondTime = thirdTime = fourthTime = fifthTime = sixthTime = seventhTime = eighthTime = ninthTime = tenthTime = 0;
+      getFirst = getSecond = getThird = getFourth = getFifth = getSixth = getSeventh = getEighth = getNinth = getTenth = true;
       getStartTime = true;
       totalBalance = "Your current balance is: " + balance + " coins";
       //Array initialization
@@ -875,7 +964,7 @@ class Walker
   void walk()
   {
     if(myX <= 985){ 
-      myX+= (int)(Math.random()*10); //Speed of racers
+      myX+= (int)(Math.random()*speed); //Speed of racers
       if (myY >= laneY+(laneHeight/4)) //Lower limit of lane
         myY-= 3;
       else if (myY <= laneY - (laneHeight/4)) //Upper limit of lane
