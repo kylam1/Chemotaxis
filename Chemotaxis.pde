@@ -760,7 +760,6 @@ if(gameStart == true) {
     if(getStartTime == true) {
       getStartTime = false;
       raceStartTime = millis()/1000;
-      System.out.println(raceStartTime);
     }
   } //End of Begin Race
 } //End of gameStart == true
